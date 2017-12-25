@@ -3,32 +3,33 @@ package com.blockchain.core;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.blockchain.util.SHAUtils;
 
 
 public class Block {
 	int index;
-	Transaction transaction;
+	List<Transaction> transactions;
 	Timestamp timestamp;
 	String hash;
 	String prevHash;
 	int nounce=0;
 	
-	public Block(String prevHash, int index,Transaction transaction,Timestamp ts) {
+	public Block(String prevHash, int index,List<Transaction> transactions,Timestamp ts) {
 		this.index=index;
 		this.prevHash=prevHash;
 		this.timestamp=ts;
 		this.index=index;
-		this.transaction=transaction;
+		this.transactions=transactions;
 		this.hash=calculateHash();;
 	}
-	public Block(int index,Transaction transaction,Timestamp ts) {
+	public Block(int index,List<Transaction> transactions,Timestamp ts) {
 		this.index=index;
 		this.prevHash="0";
 		this.timestamp=ts;
 		this.index=index;
-		this.transaction=transaction;
+		this.transactions=transactions;
 		this.hash=calculateHash();;
 	}
 	//Mine the block
@@ -54,9 +55,11 @@ public class Block {
 		String currentHash = null;
 		try {
 			md = MessageDigest.getInstance("SHA-256");
-			md.update(transaction.getFrom().getBytes());
-			md.update(transaction.getTo().getBytes());
-			md.update((byte)transaction.getAmt());
+			for(Transaction t: transactions){
+				md.update(t.getFrom().getBytes());
+				md.update(t.getTo().getBytes());
+				md.update((byte)t.getAmt());
+			}
 			md.update((byte)index);
 			md.update(SHAUtils.hexStringToByteArray(prevHash));
 			md.update(timestamp.toString().getBytes());
@@ -80,8 +83,8 @@ public class Block {
 	@Override
 	public String toString() {
 		System.out.println("--------------------------------------------------------------------------------------------------");
-		return "Block "+ index +"{index=" + index + transaction + ",timestamp=" + timestamp 
-				+ ",\n\t prevHash=" + prevHash + ", hash=" + hash+ "}";
+		return "Block "+ index +"{ index=" + index + ",\n\t Block timestamp=" + timestamp +"\n\t Transactions "+transactions  
+				+ ",\n\t Hash=" + hash + ",\n\t Previous Hash=" + prevHash+ "}";
 	}
 	
 }

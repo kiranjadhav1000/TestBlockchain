@@ -3,6 +3,7 @@ package com.blockchain.core;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Blockchain {
 	//set difficulty to mine the block
@@ -20,9 +21,11 @@ public class Blockchain {
 	}
 	//creating genesis block
 	private Block createGenesisBlock(){
-		Transaction transaction = new Transaction("Miner ", "Out of thin air", 25);
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Block genesis = new Block("0", 0, transaction, timestamp);
+		List<Transaction> transactions = new LinkedList<Transaction>();
+		Transaction transaction = new Transaction("Out of thin air ", "Miner ", 25,timestamp);
+		transactions.add(transaction);
+		Block genesis = new Block("0", 0, transactions, timestamp);
 		return genesis;
 	}
 	//add new block to blockchain after mining
